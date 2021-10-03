@@ -27,7 +27,8 @@ import qualified Data.Text                         as Text
 import qualified Data.Text.Encoding                as Text
 import qualified Database.SQLite.Simple            as Sqlite
 import qualified Network.Wai.Handler.Warp          as Warp
-import           Plutus.ChainIndex.Api             (API, FromHashAPI, UtxoAtAddressRequest (UtxoAtAddressRequest))
+import           Plutus.ChainIndex.Api             (API, FromHashAPI, UtxoAtAddressRequest (UtxoAtAddressRequest),
+                                                    UtxoWithCurrencyRequest (UtxoWithCurrencyRequest))
 import           Plutus.ChainIndex.ChainIndexError (ChainIndexError)
 import           Plutus.ChainIndex.ChainIndexLog   (ChainIndexLog)
 import           Plutus.ChainIndex.DbStore         (handleDbStore)
@@ -86,6 +87,7 @@ serveChainIndex =
     :<|> (E.txFromTxId >=> handleMaybe)
     :<|> E.utxoSetMembership
     :<|> (\(UtxoAtAddressRequest pq c) -> E.utxoSetAtAddress (fromMaybe def pq) c)
+    :<|> (\(UtxoWithCurrencyRequest pq c) -> E.utxoSetWithCurrency (fromMaybe def pq) c)
     :<|> E.getTip
     :<|> E.collectGarbage *> pure NoContent
     :<|> E.getDiagnostics
